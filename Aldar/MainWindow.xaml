@@ -5,8 +5,194 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Aldar"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+        Name="mainWnd"
+        Title="MainWindow" Loaded="Window_Loaded" Width="1143.491">
+    <Grid Margin="0,-1,-0.245,1.358">
+  
+        <!--<Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" MinWidth="400.302" />
+            <ColumnDefinition Width="265.358" MinWidth="265.358"/>
+            <ColumnDefinition Width="230"/>
+        </Grid.ColumnDefinitions>-->
+        <GroupBox Name="gbTel" HorizontalAlignment="Left" Header="GSM" Margin="24,20,0,64.679" Height="123" VerticalAlignment="Top">
+            <StackPanel Name="stpTelMain" Orientation="Horizontal" HorizontalAlignment="Left" Margin="3,3,0,0" VerticalAlignment="Top">
+                <StackPanel Name="stpTel1" Orientation="Vertical" Background="#FF96CBB3">
+                    <TextBlock HorizontalAlignment="Center">Tel. číslo 1</TextBlock>
+                    <TextBox x:Name="tbxTel1" Width="60" Margin="10,0,0,0" TextChanged="tbxTel1_TextChanged" Text="000000000" PreviewTextInput="tbxTel_PreviewTextInput"/>
+                    <CheckBox Name="chbRing1" Content="Prozvonit" Margin="0,10,0,0"/>
+                    <CheckBox Name="chbSms1" Content="Poslat sms"/>
+                    <CheckBox Name="chbRingCtrl1" Content="Ovládání prozvoněním"/>
+                    <CheckBox Name="chbSmsCtrl1" Content="Ovládání sms" Margin="0"/>
+                </StackPanel>
+                <StackPanel Name="stpTel2" Orientation="Vertical" Margin="15,0,0,0" Background="#FF79D398">
+                    <TextBlock HorizontalAlignment="Center">Tel. číslo 2</TextBlock>
+                    <TextBox x:Name="tbxTel2" Width="60" Margin="10,0,0,0" TextChanged="tbxTel2_TextChanged" Text="000000000" PreviewTextInput="tbxTel_PreviewTextInput"/>
+                    <CheckBox Name="chbRing2" Content="Prozvonit" Margin="0,10,0,0"/>
+                    <CheckBox Name="chbSms2" Content="Poslat sms"/>
+                    <CheckBox Name="chbRingCtrl2" Content="Ovládání prozvoněním"/>
+                    <CheckBox Name="chbSmsCtrl2" Content="Ovládání sms"/>
+                </StackPanel>
+                <StackPanel Name="stpTel3" Orientation="Vertical" Margin="15,0,0,0" Background="#FFA9D077">
+                    <TextBlock HorizontalAlignment="Center">Tel. číslo 3</TextBlock>
+                    <TextBox x:Name="tbxTel3" Width="60" Margin="10,0,0,0" TextChanged="tbxTel3_TextChanged" Text="000000000" PreviewTextInput="tbxTel_PreviewTextInput"/>
+                    <CheckBox Name="chbRing3" Content="Prozvonit" Margin="0,10,0,0"/>
+                    <CheckBox Name="chbSms3" Content="Poslat sms"/>
+                    <CheckBox Name="chbRingCtrl3" Content="Ovládání prozvoněním"/>
+                    <CheckBox Name="chbSmsCtrl3" Content="Ovládání sms"/>
+                </StackPanel>
+                <StackPanel x:Name="stpsigValue" Width="30">
+                    <ProgressBar BorderThickness="3" Value="{Binding gsmSigValue[0]}" Orientation="Vertical" Grid.Column="1" Margin="5,0" Grid.Row="2" Maximum="32" SmallChange="1" Height="100">
+                        <ProgressBar.BorderBrush>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="Black" Offset="0"/>
+                                <GradientStop Color="White" Offset="1"/>
+                            </LinearGradientBrush>
+                        </ProgressBar.BorderBrush>
+                    </ProgressBar>
+                </StackPanel>
+            </StackPanel>
+
+        </GroupBox>
+
+        <GroupBox Name="gbTemp" HorizontalAlignment="Center" Margin="223,20,0,0" Height="125" Header="TERMOSTAT" VerticalAlignment="Top">
+            <StackPanel Name="stpTeplMain" Orientation="Horizontal">
+                <StackPanel Name="stpTepl" Orientation="Vertical" Margin="0" Background="#FFD7FA46" Width="50">
+                    <TextBlock HorizontalAlignment="Center" Margin="0,18,0,0">Teplota</TextBlock>
+                    <TextBox x:Name="tbxTemp" Width="30" Margin="0" PreviewTextInput="tbxTemp_PreviewTextInput" Text="0"/>
+                    <TextBlock HorizontalAlignment="Center" Margin="0,10,0,0">Hystereze</TextBlock>
+                    <TextBox x:Name="tbxHystTemp" Width="30" Margin="0" Text="0"/>
+                </StackPanel>
+                <StackPanel Name="stpTeplAlarm" Orientation="Vertical" Margin="8,0,6,0" Background="#FFD7FA46" Width="50">
+                    <TextBlock HorizontalAlignment="Center" Margin="0,18,0,0">alarm T1</TextBlock>
+                    <TextBox x:Name="tbxTempAlT1" Width="30" Margin="0" HorizontalAlignment="Center" Text="0"/>
+                    <TextBlock HorizontalAlignment="Center" Margin="0,10,0,0">alarm T2</TextBlock>
+                    <TextBox x:Name="tbxTempAlT2" Width="30" Margin="0" Text="0"/>
+                </StackPanel>
+                <StackPanel Name="stpActivSelect" Orientation="Vertical" Margin="0,0,0,0.094" Width="158" Background="#FFD7FA46">
+                    <StackPanel Name="stpActSelectT1" Orientation="Horizontal" Margin="0,34,0,0">
+                        <RadioButton Name="rbSelT1down" Content="pokles" HorizontalAlignment="Center" Margin="13,0,0,0" />
+                        <RadioButton Name="rbSelT1up" Content="překročení" HorizontalAlignment="Center" Margin="17,0,0,0" />
+                    </StackPanel>
+                    <StackPanel Name="stpActSelectT2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,27,0,0">
+                        <RadioButton Name="rbSelT2down" Content="pokles" HorizontalAlignment="Center" Margin="13,0,0,0" />
+                        <RadioButton Name="rbSelT2up" Content="překročení" HorizontalAlignment="Center" Margin="17,0,0,0" />
+                    </StackPanel>
+
+                </StackPanel>
+                <StackPanel Name="stpDisplayTemps" Orientation="Vertical" Margin="5,0,0,0" Background="#FFD7FA46">
+                    <TextBlock Name="tblTemp1" Text="{Binding ElementName=mainWnd,Path=teploty[0]}" Width="30" Margin="0,34,0,0" FontWeight="Bold" TextAlignment="Center" FontSize="14" Foreground="#FF102560"/>
+                    <TextBlock Name="tblTemp2" Text="{Binding ElementName=mainWnd,Path=teploty[1]}" Margin="0,27,0,0" Foreground="#FF102560" FontSize="14" FontWeight="Bold"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Name="gbSpinacky" Header="SPINACÍ HODINY" Margin="138,0,0,20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="160">
+            <StackPanel Name="stpSpinMain" Orientation="Vertical" Background="#FF8A9EFC" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel Name="stpOnOff" Orientation="Horizontal">
+                    <TextBlock HorizontalAlignment="Left" Margin="34,0,0,0" >ON</TextBlock>
+                    <TextBlock HorizontalAlignment="Right" Margin="64,0,0,0" >OFF</TextBlock>
+                </StackPanel>
+                <StackPanel Name="stpSpin1" Orientation="Horizontal">
+                    <local:TimePicker x:Name="tpOn1"/>
+                    <local:TimePicker x:Name="tpOff1"/>
+                </StackPanel>
+                <StackPanel Name="stpSpin2" Orientation="Horizontal">
+                    <local:TimePicker x:Name="tpOn2"/>
+                    <local:TimePicker x:Name="tpOff2"/>
+                </StackPanel>
+                <StackPanel Name="stpSpin3" Orientation="Horizontal">
+                    <local:TimePicker x:Name="tpOn3"/>
+                    <local:TimePicker x:Name="tpOff3"/>
+                </StackPanel>
+                <StackPanel Name="stpSpin4" Orientation="Horizontal">
+                    <local:TimePicker x:Name="tpOn4"/>
+                    <local:TimePicker x:Name="tpOff4"/>
+                </StackPanel>
+
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Name="grbLoops" Margin="20,0,0,20" VerticalAlignment="Bottom" Height="160" HorizontalAlignment="Left" Header="SMYČKY">
+            <StackPanel Name="stpMainLoops" Orientation="Horizontal" Background="#FF71CC7E">
+                <StackPanel Name="stpLoop1" Orientation="Vertical" Margin="10,10,10,1.962">
+                    <TextBlock Margin="0,2,0,0" HorizontalAlignment="Center">Smyčka 1</TextBlock>
+                    <RadioButton x:Name="rbInst1" Margin="0,20,0,0" Content="inst"/>
+                    <RadioButton x:Name="rbDel1" Content="del"/>
+                    <RadioButton x:Name="rb24h1"  Content="24 hod"/>
+                    <RadioButton x:Name="rbZona1" Content="zona"/>
+                    <RadioButton x:Name="rbNone1" Content="vypnuta"/>
+                </StackPanel>
+                <StackPanel Name="stpLoop2" Orientation="Vertical" Margin="0,10,10,0">
+                    <TextBlock Margin="0,2,0,0" HorizontalAlignment="Center"><Run Text="Smyčka "/><Run Text="2"/></TextBlock>
+                    <RadioButton x:Name="rbInst2" Margin="0,20,0,0" Content="inst"/>
+                    <RadioButton x:Name="rbDel2" Content="del"/>
+                    <RadioButton x:Name="rb24h2"  Content="24 hod"/>
+                    <RadioButton x:Name="rbZona2" Content="zona"/>
+                    <RadioButton x:Name="rbNone2" Content="vypnuta"/>
+                </StackPanel>
+
+                <StackPanel Name="stpLoop3" Orientation="Vertical" Margin="0,10,10,0">
+                    <TextBlock Margin="0,2,0,0" HorizontalAlignment="Center"><Run Text="Smyčka "/><Run Text="3"/></TextBlock>
+                    <RadioButton x:Name="rbInst3" Margin="0,20,0,0" Content="inst"/>
+                    <RadioButton x:Name="rbDel3" Content="del"/>
+                    <RadioButton x:Name="rb24h3"  Content="24 hod"/>
+                    <RadioButton x:Name="rbZona3" Content="zona"/>
+                    <RadioButton x:Name="rbNone3" Content="vypnuta"/>
+                </StackPanel>
+
+                <StackPanel Name="stpLoop4" Orientation="Vertical" Margin="0,10,12,0">
+                    <TextBlock Margin="0,2,0,0" HorizontalAlignment="Center"><Run Text="Smyčka "/><Run Text="4"/></TextBlock>
+                    <RadioButton x:Name="rbInst4" Margin="0,20,0,0" Content="inst"/>
+                    <RadioButton x:Name="rbDel4" Content="del"/>
+                    <RadioButton x:Name="rb24h4"  Content="24 hod"/>
+                    <RadioButton x:Name="rbZona4" Content="zona"/>
+                    <RadioButton x:Name="rbNone4" Content="vypnuta"/>
+                </StackPanel>
+                <StackPanel Name="stpSelActiv" Orientation="Vertical" Background="#FF65B47A" Margin="0,0,10,0">
+                    <TextBlock Margin="0,10,0,0" HorizontalAlignment="Center">aktivace</TextBlock>
+                    <RadioButton x:Name="rbAktivSep"  Content="sepnutím" Margin="0,19,0,0"/>
+                    <RadioButton x:Name="rbAktivRozep" Content="rozepnutím"/>
+                </StackPanel>
+                <StackPanel Name="stpLoopTimes" Orientation="Vertical" Margin="0,0,10,0">
+                    <TextBlock Margin="0,10,0,0" HorizontalAlignment="Center">časy</TextBlock>
+                    <TextBlock Margin="0,15,0,0">příchod</TextBlock>
+                    <TextBox Name="tbxEntryTime" PreviewTextInput="tbxTime_PreviewTextInput" Text="0" />
+                    <TextBlock>odchod</TextBlock>
+                    <TextBox Name="tbxExitTime" PreviewTextInput="tbxTime_PreviewTextInput" Text="0"/>
+                    <TextBlock>siréna</TextBlock>
+                    <TextBox Name="tbxAlarmTime" PreviewTextInput="tbxTime_PreviewTextInput" Text="0"/>
+                </StackPanel>
+
+                <StackPanel Name="stpZoneTimes" Orientation="Vertical" Margin="0,0,10,0">
+                    <TextBlock Margin="0,10,0,0" HorizontalAlignment="Center">časy zóna</TextBlock>
+                    <TextBlock Margin="0,15,0,0" HorizontalAlignment="Center">aktivní</TextBlock>
+                    <TextBox Name="tbxZoneActivTime"  PreviewTextInput="tbxTime_PreviewTextInput" Text="0"/>
+                    <TextBlock HorizontalAlignment="Center">klidový</TextBlock>
+                    <TextBox Name="tbxZoneRestTime" PreviewTextInput="tbxTime_PreviewTextInput" Text="0"/>
+
+                </StackPanel>
+
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Name="grbCom" Header="SPOJENÍ" Background="#FFC7E9EE" Width="103" HorizontalAlignment="Center" Margin="542,0,1.66,20" Height="160" VerticalAlignment="Bottom">
+            <Grid>
+                <ComboBox Name="cmbComPorts" SelectionChanged="cmbComPorts_SelectionChanged" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="96,30,90.774,139.283" Width="65" Height="20"/>
+                <Button x:Name="btnCom" Click="btnCom_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Připojit" Margin="0,0,0,51" />
+                <Button x:Name="btnUpload" Click="btnUpload_Click" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="Uložit data" Margin="0,0,0,60" />
+                <Button x:Name="btnDownload" Click="btnDownload_Click" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="Načíst data" Margin="0,-6,0,35" />
+                <Button x:Name="btnHistory" Click="btnHistory_Click" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="Historie událostí" Margin="0,0,0,10" />
+
+            </Grid>
+
+        </GroupBox>
+        <TextBox Name="tbxMessages" VerticalScrollBarVisibility="Visible" Text="{Binding textMsg[0]}" Width="200" Height="auto" TextWrapping="Wrap" Grid.RowSpan="2" HorizontalAlignment="Right" Margin="262.698,20,32.698,20" Grid.ColumnSpan="2" BorderBrush="#FF030A1E" TextChanged="tbxMessages_TextChanged"/>
+        <TextBox  x:Name="tblDateTime" BorderThickness="3" HorizontalAlignment="Left" Margin="152,30.717,0,0" TextWrapping="Wrap" Text="{Binding textMsg[1]}"  VerticalAlignment="Center" FontSize="18" Foreground="#FF09072F" IsEnabled="False" Width="179" Background="#FFAAF6F0" IsReadOnlyCaretVisible="True">
+            <TextBox.BorderBrush>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="Black" Offset="0"/>
+                    <GradientStop Color="White" Offset="1"/>
+                </LinearGradientBrush>
+            </TextBox.BorderBrush>
+        </TextBox>
     </Grid>
 </Window>
