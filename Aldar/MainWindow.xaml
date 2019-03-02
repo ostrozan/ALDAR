@@ -55,7 +55,14 @@
         </GroupBox>
 
         <GroupBox Name="gbTemp" HorizontalAlignment="Center" Margin="223,20,0,0" Height="125" Header="TERMOSTAT" VerticalAlignment="Top">
+            
             <StackPanel Name="stpTeplMain" Orientation="Horizontal">
+                <StackPanel Name="stpDisplayTemps" Orientation="Vertical" Margin="3,0,10,0" Background="#FFD7FA46">
+                    <TextBlock FontSize="14" FontWeight="Bold" Margin="0,8,0,0" HorizontalAlignment="Center">akt.</TextBlock>
+                    <TextBlock Name="tblTemp1" Text="{Binding ElementName=mainWnd,Path=teploty[0]}" Margin="0,5,0,0" FontWeight="Bold" TextAlignment="Center" FontSize="14" Foreground="#FF102560"/>
+                    <TextBlock Name="tblTemp2" Text="{Binding ElementName=mainWnd,Path=teploty[1]}" Margin="0,21,0,0" Foreground="#FF102560" FontSize="14" FontWeight="Bold"/>
+                </StackPanel>
+
                 <StackPanel Name="stpTepl" Orientation="Vertical" Margin="0" Background="#FFD7FA46" Width="50">
                     <TextBlock HorizontalAlignment="Center" Margin="0,18,0,0">Teplota</TextBlock>
                     <TextBox x:Name="tbxTemp" Width="30" Margin="0" PreviewTextInput="tbxTemp_PreviewTextInput" Text="0"/>
@@ -78,10 +85,6 @@
                         <RadioButton Name="rbSelT2up" Content="překročení" HorizontalAlignment="Center" Margin="17,0,0,0" />
                     </StackPanel>
 
-                </StackPanel>
-                <StackPanel Name="stpDisplayTemps" Orientation="Vertical" Margin="5,0,0,0" Background="#FFD7FA46">
-                    <TextBlock Name="tblTemp1" Text="{Binding ElementName=mainWnd,Path=teploty[0]}" Width="30" Margin="0,34,0,0" FontWeight="Bold" TextAlignment="Center" FontSize="14" Foreground="#FF102560"/>
-                    <TextBlock Name="tblTemp2" Text="{Binding ElementName=mainWnd,Path=teploty[1]}" Margin="0,27,0,0" Foreground="#FF102560" FontSize="14" FontWeight="Bold"/>
                 </StackPanel>
             </StackPanel>
         </GroupBox>
