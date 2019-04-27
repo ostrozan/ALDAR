@@ -31,17 +31,17 @@ namespace Aldar
 
         public Com(string deviceName, int baudrate)
         {
-            //try
-            //{
-            //    if (deviceName.Contains("COM")) { serialPort.PortName = deviceName; }
-            //    else { serialPort.PortName = SearchDevice(deviceName); }
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Message);
-            //}
+            try
+            {
+                if (deviceName.Contains("COM")) { serialPort.PortName = deviceName; }
+                else serialPort.PortName = SearchDevice(deviceName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             //this.dataClass = dataClass;
-            serialPort.PortName = deviceName;
+            //serialPort.PortName = deviceName;
             serialPort.DataReceived += SerialPort_DataReceived;
             serialPort.DtrEnable = true;
             serialPort.RtsEnable = true;
@@ -61,55 +61,46 @@ namespace Aldar
             List<string> tmp = new List<string>();
             string comName = "";
 
-            //try
-            //{
+            try
+            {
 
-            //    bool nalezeno = false;
-            //    //instance vyhledávače objektů(portů)
-            //    ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_SerialPort");
+                bool nalezeno = false;
+                //instance vyhledávače objektů(portů)
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_SerialPort");
 
-            //    //projede kolekci nalezených objektů
-            //    foreach (ManagementObject queryObj in searcher.Get())
-            //    {
-            //        //vyseparuje název
-            //        tmp.Add(queryObj["Caption"].ToString());
+                //projede kolekci nalezených objektů
+                foreach (ManagementObject queryObj in searcher.Get())
+                {
+                    //vyseparuje název
+                    tmp.Add(queryObj["Caption"].ToString());
 
-            //        //když najde požadovaný název v seznamu přiřadí mu místní serialPort("Port")
-            //        //vypíše hlášku o úspěchu/ neúspěchu
-            //        if (queryObj["Caption"].ToString().Contains(deviceName))
-            //        {
-            //            comName = queryObj["DeviceID"].ToString();
-            //            nalezeno = true;
-            //        }
-            //        //eZ430-ChronosAP
-            //        //{
-            //        //    MessageBox.Show("Arduino nalezeno na portu: " + queryObj["DeviceID"]);
-            //        //    //ez43serial.PortName = queryObj["DeviceID"].ToString();
-            //        //    //retval = true;
+                    //když najde požadovaný název v seznamu přiřadí mu místní serialPort("Port")
+                    //vypíše hlášku o úspěchu/ neúspěchu
+                    if (queryObj["Caption"].ToString().Contains(deviceName))
+                    {
+                        comName = queryObj["DeviceID"].ToString();
+                        nalezeno = true;
+                    }
 
-            //        //}
 
-            //    }
+                }
 
-            //    if (nalezeno == false)
-            //    {
-              
-            //        if (MessageBox.Show("Nebylo nalezeno žádné zařízení ArDaLu na USB \n chcete pokračovat přes bluetooth?", "POZOR", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-            //        {
-            //            return "COM100";
-            //        }
-            //        else
-            //        {
-            //            comName = "none";
-            //        }
-            //    }
+                if (nalezeno == false)
+                {
 
-            //}
+                    MessageBox.Show("Nebylo nalezeno žádné zařízení Aldar na USB \n ", "POZOR", MessageBoxButton.OK);
+          
+  
+                        comName = "none";
+                   
+                }
 
-            //catch (ManagementException ex)
-            //{
-            //    MessageBox.Show(ex.Message);
-            //}
+            }
+
+            catch (ManagementException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             return comName;
         }
 
@@ -121,10 +112,15 @@ namespace Aldar
             serialPort.DiscardInBuffer();
             try
             {
+                if (rxBuffer.Contains("data"))
+                {
+
+                    LoadData(rxBuffer);
+                }
                 if (rxBuffer.Contains("dt>"))
                 {
-                    int pom = 0;
-                    int.TryParse(rxBuffer.Substring(rxBuffer.IndexOf('<') + 11, 2), out pom);
+                    double pom = 0;
+                    double.TryParse(rxBuffer.Substring(rxBuffer.IndexOf('<') + 11, 2), out pom);
                     MainWindow.textMsg[1] = rxBuffer.Substring(3, rxBuffer.IndexOf('<') - 3);
                     MainWindow.teploty[0] = rxBuffer.Substring(rxBuffer.IndexOf('<') + 1, 4) + " °C";
                     MainWindow.teploty[1] = rxBuffer.Substring(rxBuffer.IndexOf('<') + 6, 4) + " °C";
@@ -145,12 +141,7 @@ namespace Aldar
                         MessageBox.Show("chyba přenosu dat - zkuste znovu");
                         //MainWindow.curs = Cursors.Arrow;
                     }
-                    if (rxBuffer.Contains("data"))
-                    {
 
-                        LoadData(rxBuffer);
-                        //MainWindow.texts_counters[c1] = "";
-                    }
 
                     if (rxBuffer.Contains("in"))
                     {
@@ -193,11 +184,9 @@ namespace Aldar
 
         }
 
-        public void send()
-        {
-
-         
-            serialPort.WriteLine(rxBuffer);
+        public void send(String s)
+        {       
+            serialPort.WriteLine(s);
         }
 
         public void send(byte[] data)
@@ -231,11 +220,14 @@ namespace Aldar
                         // port neotevren,otevrit 
                         serialPort.Open();
                         State = comState.open;
+                        send("DS");//zprava pro modul aby posilal zpravy
                         //MainWindow.inputs[0].Led.Fill = Brushes.Lime;
                     }
                     else
                     {
                         //port otevren, zavrit
+                        send("DE");//zprava pro modul aby neposilal zpravy
+                        Thread.Sleep(100);
                         State = comState.close;
                         serialPort.DiscardInBuffer();
                         //   while (!zavritPortFlag) ;
@@ -342,8 +334,8 @@ namespace Aldar
         {
    
             string[] arr1 = rxBuffer.Split(' ');//zakladni deleni
-            string[] arr2 = arr1[22].Split('/');
-            string[] arr3 = arr1[23].Split(':');
+            string[] arr2 = arr1[23].Split('/');
+            string[] arr3 = arr1[24].Split(':');
             MainWindow.dataClass.Entry =  arr1[0];
             MainWindow.dataClass.Exit = arr1[1];
             MainWindow.dataClass.Alarm = arr1[2];
@@ -360,18 +352,19 @@ namespace Aldar
             MainWindow.dataClass.IsTel1RngCtrl = arr1[9];
             MainWindow.dataClass.IsTel1Sms = arr1[10];
             MainWindow.dataClass.IsTel1Rng = arr1[11];
+            MainWindow.dataClass.IsTel1Microphone = arr1[12];
             //tel2
-            MainWindow.dataClass.TelNum2 = arr1[12];
-            MainWindow.dataClass.IsTel2SmsCtrl = arr1[13];
-            MainWindow.dataClass.IsTel2RngCtrl = arr1[14];
-            MainWindow.dataClass.IsTel2Sms = arr1[15];
-            MainWindow.dataClass.IsTel2Rng = arr1[16];
+            MainWindow.dataClass.TelNum2 = arr1[13];
+            MainWindow.dataClass.IsTel2SmsCtrl = arr1[14];
+            MainWindow.dataClass.IsTel2RngCtrl = arr1[15];
+            MainWindow.dataClass.IsTel2Sms = arr1[16];
+            MainWindow.dataClass.IsTel2Rng = arr1[17];
             //tel3
-            MainWindow.dataClass.TelNum3 = arr1[17];
-            MainWindow.dataClass.IsTel3SmsCtrl = arr1[18];
-            MainWindow.dataClass.IsTel3RngCtrl = arr1[19];
-            MainWindow.dataClass.IsTel3Sms = arr1[20];
-            MainWindow.dataClass.IsTel3Rng = arr1[21];
+            MainWindow.dataClass.TelNum3 = arr1[18];
+            MainWindow.dataClass.IsTel3SmsCtrl = arr1[19];
+            MainWindow.dataClass.IsTel3RngCtrl = arr1[20];
+            MainWindow.dataClass.IsTel3Sms = arr1[21];
+            MainWindow.dataClass.IsTel3Rng = arr1[22];
             //spinacky
             Int16 i = 0;
             string[] s2 = arr2[0].Split(':');

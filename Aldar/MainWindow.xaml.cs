@@ -7,13 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Aldar
 {
@@ -53,12 +47,11 @@ namespace Aldar
 
         public static ObservableCollection<string> textMsg { get; set; } = new ObservableCollection<string>() { "", "" };
         public static ObservableCollection<string> teploty { get; set; } = new ObservableCollection<string>() { "", "" };
-        public static ObservableCollection<int> gsmSigValue { get; set; } = new ObservableCollection<int>() { 0 };
+        public static ObservableCollection<double> gsmSigValue { get; set; } = new ObservableCollection<double>() { 0 };
 
-        public static DataClass dataClass =new DataClass();
+        public static DataClass dataClass = new DataClass();
 
-        //public  DataClass dataClass = new DataClass();
-        Com com = new Com("COM4", 38400);
+        Com com = new Com("Arduino", 38400);
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -66,17 +59,13 @@ namespace Aldar
         {
             InitializeComponent();
             cmbComPorts.ItemsSource = Com.DejPorty;
-             DataContext = this;
-            teploty[0] = "30,5";
-            teploty[1] = "20,5";
-            //dataClass = new DataClass();
+            DataContext = this;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
+            if (com.serialPort.PortName == "none") this.Close();
         }
-
         private void cmbComPorts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             com = new Com(cmbComPorts.SelectedItem.ToString(), 38400);
@@ -91,6 +80,7 @@ namespace Aldar
                 {
                     btnCom.Content = "Odpojit";
                     MessageBox.Show(com.serialPort.PortName + " byl úspěšně  připojen");
+
                 }
                 else
                 {
@@ -137,6 +127,7 @@ namespace Aldar
             dataClass.IsTel1RngCtrl = (bool)chbRingCtrl1.IsChecked ? "1" : "0";
             dataClass.IsTel1Sms = (bool)chbSms1.IsChecked ? "1" : "0";
             dataClass.IsTel1Rng = (bool)chbRing1.IsChecked ? "1" : "0";
+            dataClass.IsTel1Microphone = (bool)chbMonitor.IsChecked ? "1" : "0";
             data.AddRange(Encoding.ASCII.GetBytes(tbxTel1.Text));
             data.Add(0);//doplneni nuly na konec stringu
 
@@ -144,6 +135,7 @@ namespace Aldar
             data.Add((byte)((bool)chbRingCtrl1.IsChecked ? 1 : 0));
             data.Add((byte)((bool)chbSms1.IsChecked ? 1 : 0));
             data.Add((byte)((bool)chbRing1.IsChecked ? 1 : 0));
+            data.Add((byte)((bool)chbMonitor.IsChecked ? 1 : 0));
             data.Add(0);//doplneni nuly do zbyle promenne v mcu
             data.Add(0);//doplneni nuly do zbyle promenne v mcu
                         //gsm 2
@@ -166,7 +158,7 @@ namespace Aldar
             dataClass.IsTel3RngCtrl = (bool)chbRingCtrl3.IsChecked ? "1" : "0";
             dataClass.IsTel3Sms = (bool)chbSms3.IsChecked ? "1" : "0";
             dataClass.IsTel3Rng = (bool)chbRing3.IsChecked ? "1" : "0";
-            data.AddRange(Encoding.ASCII.GetBytes( tbxTel3.Text));
+            data.AddRange(Encoding.ASCII.GetBytes(tbxTel3.Text));
             data.Add(0);//doplneni nuly na konec stringu
             data.Add((byte)((bool)chbSmsCtrl3.IsChecked ? 1 : 0));
             data.Add((byte)((bool)chbRingCtrl3.IsChecked ? 1 : 0));
@@ -246,15 +238,15 @@ namespace Aldar
             com.IsRxEvent = false;
             await Load();
             //casy
-            tbxEntryTime.Text =dataClass.Entry;
+            tbxEntryTime.Text = dataClass.Entry;
             tbxExitTime.Text = dataClass.Exit;
             tbxAlarmTime.Text = dataClass.Alarm;
             tbxZoneActivTime.Text = dataClass.ZoneActiv;
             tbxZoneRestTime.Text = dataClass.ZoneWait;
             //smycky
-            switch(dataClass.LoopTypes[0])
+            switch (dataClass.LoopTypes[0])
             {
-                case "0":rbNone1.IsChecked = true; break;
+                case "0": rbNone1.IsChecked = true; break;
                 case "1": rbInst1.IsChecked = true; break;
                 case "2": rbDel1.IsChecked = true; break;
                 case "3": rb24h1.IsChecked = true; break;
@@ -296,6 +288,7 @@ namespace Aldar
             chbSms1.IsChecked = dataClass.IsTel1Sms == "1";
             chbRingCtrl1.IsChecked = dataClass.IsTel1RngCtrl == "1";
             chbSmsCtrl1.IsChecked = dataClass.IsTel1SmsCtrl == "1";
+            chbMonitor.IsChecked = dataClass.IsTel1Microphone == "1";
             //tel2
             tbxTel2.Text = dataClass.TelNum2;
             chbRing2.IsChecked = dataClass.IsTel2Rng == "1";
@@ -309,7 +302,7 @@ namespace Aldar
             chbRingCtrl3.IsChecked = dataClass.IsTel3RngCtrl == "1";
             chbSmsCtrl3.IsChecked = dataClass.IsTel3SmsCtrl == "1";
 
-            tpOn1.Hod = (dataClass.MinuteSpan1.startTime / 60).ToString().PadLeft(2,'0');
+            tpOn1.Hod = (dataClass.MinuteSpan1.startTime / 60).ToString().PadLeft(2, '0');
             tpOn1.Min = (dataClass.MinuteSpan1.startTime % 60).ToString().PadLeft(2, '0');
             tpOff1.Hod = (dataClass.MinuteSpan1.stopTime / 60).ToString().PadLeft(2, '0');
             tpOff1.Min = (dataClass.MinuteSpan1.stopTime % 60).ToString().PadLeft(2, '0');
@@ -347,18 +340,50 @@ namespace Aldar
             if (dataClass.ActivAlT2 == "1") rbSelT2up.IsChecked = true;
             else rbSelT2down.IsChecked = true;
 
-        } 
+        }
 
         private async Task Load()
         {
-            List<byte> data = new List<byte>();
-            data.Add((byte)'R');
-            com.send(data.ToArray());
+            com.send("R\r\n");
             while (com.IsRxEvent == false) ;
         }
 
-        private void btnHistory_Click(object sender, RoutedEventArgs e)
+        private async void btnHistory_Click(object sender, RoutedEventArgs e)
         {
+            string rxData;
+            try
+            {
+                await GetEventList();
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message);
+            }
+            GUI_logo.WindowEvent wind = new GUI_logo.WindowEvent(rx_event_data,com);
+            wind.ShowDialog();
+        }
+
+        private string rx_event_data = "";
+        private async Task GetEventList()
+        {
+            try
+            {
+                com.send("E\r\n");
+                while (true)
+                {
+                    if (com.rxBuffer.Contains("event"))
+                    {
+                        rx_event_data = com.rxBuffer;
+                        break;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+
+                MessageBox.Show(e.Message);
+            }
 
         }
 

@@ -174,6 +174,20 @@ namespace Aldar
             }
         }
 
+        private string isTel1Microphone;
+        public string IsTel1Microphone
+        {
+            get { return isTel1Microphone; }
+            set
+            {
+                if (isTel1Microphone != value)
+                {
+                    isTel1Microphone = value;
+                    NotifyPropertyChanged("IsTel1Microphone");
+                }
+            }
+        }
+
         private string telNum2;
         public string TelNum2
         {
